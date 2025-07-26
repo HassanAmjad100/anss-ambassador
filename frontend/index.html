@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>ANSS Ambassador Landing Page</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --gold: #d4aa62;
+        --gold-dark: #bfa14a;
+        --gold-gradient: linear-gradient(
+          90deg,
+          #bfa14a 0%,
+          #d4aa62 60%,
+          #bfa14a 100%
+        );
+        --black: #0c0c0c;
+        --grey-dark: #181611;
+        --grey: #232015;
+        --brown: #7a5a2f;
+        --white: #fff;
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      }
+      body {
+        font-family: "Montserrat", Arial, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--black) 0%,
+          var(--grey-dark) 100%
+        );
+        margin: 0;
+        color: var(--gold);
+        min-height: 100vh;
+      }
+      .header {
+        background: var(--black);
+        color: var(--gold);
+        padding: 40px 0 24px 0;
+        text-align: center;
+        box-shadow: var(--shadow);
+        border-bottom: 2px solid var(--brown);
+      }
+      .header img {
+        width: 110px;
+        margin-bottom: 12px;
+        filter: drop-shadow(0 2px 8px #d4aa6255);
+      }
+      .header-title {
+        font-size: 2.4rem;
+        font-weight: 800;
+        letter-spacing: 2px;
+        margin: 0;
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .subtitle {
+        color: var(--gold);
+        font-size: 1.15rem;
+        margin: 14px 0 26px 0;
+        opacity: 0.93;
+        letter-spacing: 0.7px;
+        font-weight: 500;
+      }
+      .cta-btn {
+        background: var(--gold-gradient);
+        color: var(--black);
+        border: none;
+        padding: 16px 44px;
+        font-size: 1.18rem;
+        font-weight: 700;
+        border-radius: 30px;
+        cursor: pointer;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 12px #d4aa6233;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      }
+      .cta-btn:hover {
+        background: linear-gradient(90deg, #d4aa62 0%, #bfa14a 100%);
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 4px 24px #d4aa6255;
+      }
+      .container {
+        max-width: 500px;
+        box-sizing: border-box;
+        margin: 40px auto 32px auto;
+        background: var(--grey-dark);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        padding: 38px 28px 38px 28px;
+        color: var(--gold);
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+      }
+      h2 {
+        color: var(--gold);
+        font-size: 1.32rem;
+        margin-top: 0;
+        margin-bottom: 14px;
+        font-weight: 800;
+        letter-spacing: 0.7px;
+        text-shadow: 0 2px 8px #d4aa6222;
+      }
+      ul {
+        padding-left: 22px;
+        margin-top: 0;
+        margin-bottom: 22px;
+      }
+      li {
+        margin-bottom: 10px;
+        font-size: 1.08rem;
+        line-height: 1.7;
+        letter-spacing: 0.1px;
+        font-weight: 500;
+        color: var(--white);
+      }
+      .check {
+        color: #27ae60;
+        font-size: 1.1em;
+        margin-right: 4px;
+      }
+      .form-section {
+        background: var(--black);
+        border-radius: 18px;
+        padding: 28px 18px 22px 18px;
+        box-shadow: 0 2px 16px #0004;
+        margin-top: 18px;
+      }
+      .form-section label {
+        box-sizing: border-box;
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 700;
+        color: var(--gold);
+        letter-spacing: 0.3px;
+        font-size: 1.05rem;
+      }
+      .form-section input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 14px;
+        margin-bottom: 20px;
+        border: 1.5px solid var(--gold);
+        border-radius: 8px;
+        font-size: 1.04rem;
+        background: var(--grey-dark);
+        color: var(--gold);
+        transition: border 0.2s, box-shadow 0.2s;
+        font-weight: 500;
+        box-shadow: 0 1px 4px #0002;
+      }
+      .form-section input:focus {
+        border: 1.5px solid var(--gold-dark);
+        outline: none;
+        background: var(--grey);
+        box-shadow: 0 2px 8px #d4aa6233;
+        color: var(--gold);
+      }
+      .form-section button {
+        background: var(--gold-gradient);
+        color: var(--black);
+        border: none;
+        padding: 14px 0;
+        width: 100%;
+        font-size: 1.13rem;
+        font-weight: 800;
+        border-radius: 24px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #d4aa6233;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        margin-top: 10px;
+        letter-spacing: 0.5px;
+      }
+      .form-section button:hover {
+        background: linear-gradient(90deg, #d4aa62 0%, #bfa14a 100%);
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 4px 24px #d4aa6255;
+      }
+      .form-section input::placeholder {
+        color: #d4aa6299;
+        opacity: 1;
+        font-weight: 400;
+      }
+      .note {
+        font-size: 1em;
+        color: var(--gold);
+        margin-top: -8px;
+        margin-bottom: 22px;
+        opacity: 0.85;
+        font-weight: 500;
+      }
+      @media (max-width: 600px) {
+        .container {
+          margin: 18px 2px 18px 2px;
+          padding: 18px 6px 24px 6px;
+        }
+        .header img {
+          width: 70px;
+        }
+        .header-title {
+          font-size: 1.3rem;
+        }
+        .form-section button {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <img src="logo.png" alt="ANSS Group Logo" />
+      <div class="header-title">ANSS Ambassador Program</div>
+      <div class="subtitle">
+        Refer a buyer. Earn PKR 100,000 per successful sale.
+      </div>
+      <button
+        class="cta-btn"
+        onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})"
+      >
+        Join Now
+      </button>
+    </div>
+    <div class="container">
+      <h2>How It Works</h2>
+      <ul>
+        <li>
+          <span class="check">✅</span>Register below to become an Ambassador
+        </li>
+        <li>
+          <span class="check">✅</span>Get your personal referral code or link
+        </li>
+        <li>
+          <span class="check">✅</span>Share with friends, family & on social
+          media
+        </li>
+        <li>
+          <span class="check">✅</span>Earn PKR 100,000 when your referral buys
+          an apartment
+        </li>
+      </ul>
+      <h2>Who Can Join?</h2>
+      <ul>
+        <li>🎓 Students</li>
+        <li>🌍 Overseas Pakistanis</li>
+        <li>📱 Influencers &amp; Agents</li>
+        <li>🤝 Anyone with a network!</li>
+      </ul>
+      <h2 id="join">Join the Program</h2>
+      <div class="note"></div>
+      <form class="form-section">
+        <label for="name">Full Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          required
+          placeholder="Enter your full name"
+        />
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          placeholder="Enter your email address"
+        />
+        <label for="whatsapp">Contact Number:</label>
+        <input
+          type="text"
+          id="whatsapp"
+          name="whatsapp"
+          required
+          placeholder="03xx-xxxxxxx"
+        />
+        <label for="cnic">CNIC:</label>
+        <input
+          type="text"
+          id="cnic"
+          name="cnic"
+          required
+          placeholder="xxxxx-xxxxxxx-x"
+        />
+        <label for="city">City:</label>
+        <input
+          type="text"
+          id="city"
+          name="city"
+          required
+          placeholder="Enter your city"
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script>
+      document
+        .querySelector(".form-section")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          try {
+            const data = {
+              name: document.getElementById("name").value,
+              email: document.getElementById("email").value,
+              whatsapp: document.getElementById("whatsapp").value,
+              cnic: document.getElementById("cnic").value,
+              city: document.getElementById("city").value,
+            };
+
+            console.log("Submitting data:", data); // Debug log
+
+            const res = await fetch("http://localhost:3000/api/submit", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+
+            console.log("Response status:", res.status); // Debug log
+            const result = await res.json();
+            console.log("Response data:", result); // Debug log
+
+            if (res.ok) {
+              // Create success message container
+              const successMsg = document.createElement("div");
+
+              // Position in center of screen
+              successMsg.style.position = "fixed";
+              successMsg.style.top = "50%"; // Changed from 20px to 50%
+              successMsg.style.left = "50%";
+              successMsg.style.transform = "translate(-50%, -50%)"; // Added Y-axis transform
+              successMsg.style.zIndex = "1000";
+
+              // Styling
+              successMsg.style.width = "90%";
+              successMsg.style.maxWidth = "400px";
+              successMsg.style.background = "var(--gold-gradient)";
+              successMsg.style.color = "var(--black)";
+              successMsg.style.padding = "30px 20px"; // Increased padding
+              successMsg.style.borderRadius = "16px";
+              successMsg.style.boxShadow = "0 4px 30px rgba(0,0,0,0.4)";
+              successMsg.style.textAlign = "center";
+              successMsg.style.fontWeight = "bold";
+              successMsg.style.fontSize = "1.2rem";
+
+              // Add success message content with referral code
+              successMsg.innerHTML = `
+                <div style="margin-bottom:15px">✅ Submission Successful!</div>
+      
+              `;
+
+              // Add to document
+              document.body.appendChild(successMsg);
+
+              // Clear form
+              e.target.reset();
+
+              // Add fade in effect
+              successMsg.style.opacity = "0";
+              successMsg.style.transition = "opacity 0.3s ease-out";
+              setTimeout(() => (successMsg.style.opacity = "1"), 10);
+
+              // Remove message after 5 seconds with fade effect
+              setTimeout(() => {
+                successMsg.style.opacity = "0";
+                setTimeout(() => successMsg.remove(), 300);
+              }, 5000);
+            } else {
+              throw new Error(result.error || "Submission failed");
+            }
+          } catch (err) {
+            console.error("Form submission error:", err);
+            alert("Error submitting form: " + err.message);
+          }
+        });
+    </script>
+  </body>
+</html>
