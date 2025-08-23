@@ -1,8 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const { google } = require("googleapis");
-const fs = require("fs");
-const path = require("path");
 
 // Enhanced error handlers with more detail
 process.on("uncaughtException", (err) => {
@@ -30,6 +28,8 @@ app.use(
     origin: [
       "http://127.0.0.1:5500",
       "http://127.0.0.1:5500/project/frontend/index.html",
+      "https://anss-ambassador.vercel.app",
+      "http://localhost:3000"
     ],
     credentials: true,
   })
@@ -41,16 +41,41 @@ app.get("/", (req, res) => {
   res.send("Server is working!");
 });
 
-// Load credentials with error handling
+// Test route to check environment
+app.get("/api/test", (req, res) => {
+  res.json({
+    message: "API is working!",
+    environment: process.env.NODE_ENV || "development",
+    hasCredentials: !!credentials,
+    vercel: !!process.env.VERCEL,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Load credentials from environment variables for Vercel deployment
 let credentials;
 try {
-  credentials = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "credentials.json"))
-  );
-  console.log("Credentials loaded successfully");
+  if (process.env.GOOGLE_CREDENTIALS) {
+    // For Vercel deployment - use environment variable
+    credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+    console.log("Credentials loaded from environment variables");
+  } else {
+    // For local development - try to read from file
+    const fs = require("fs");
+    const path = require("path");
+    credentials = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "credentials.json"))
+    );
+    console.log("Credentials loaded from local file");
+  }
 } catch (err) {
   console.error("Error loading credentials:", err);
-  process.exit(1); // Exit if credentials can't be loaded
+  // Don't exit on Vercel, just log the error
+  if (process.env.VERCEL) {
+    console.error("Running on Vercel but no credentials found");
+  } else {
+    process.exit(1);
+  }
 }
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
@@ -59,7 +84,7 @@ const auth = new google.auth.GoogleAuth({
   scopes: SCOPES,
 });
 
-const SPREADSHEET_ID = "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID || "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
 const RANGE = "Sheet1!A:F";
 
 app.post("/api/submit", async (req, res) => {
@@ -69,6 +94,11 @@ app.post("/api/submit", async (req, res) => {
 
     if (!name || !email || !whatsapp || !cnic || !city) {
       throw new Error("Missing required fields");
+    }
+
+    // Check if credentials are available
+    if (!credentials) {
+      throw new Error("Google API credentials not configured");
     }
 
     const sheets = google.sheets({ version: "v4", auth });
@@ -101,23 +131,38 @@ app.post("/api/submit", async (req, res) => {
       },
     });
 
-    console.log(`Data written successfully with code: ${newCode}`);
-    res.status(200).json({
-      message: "Success",
-      code: newCode,
+    console.log("Data appended successfully with code:", newCode);
+
+    res.json({
+      success: true,
+      message: "Form submitted successfully",
+      referralCode: newCode,
     });
-  } catch (err) {
-    console.error("Error processing request:", err);
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error("Error in /api/submit:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Internal server error",
+    });
   }
 });
 
-// Start server with error handling
-const server = app
-  .listen(3000, () => {
-    console.log("Server running on port 3000");
-  })
-  .on("error", (err) => {
-    console.error("Error starting server:", err);
-    process.exit(1);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  res.status(500).json({
+    success: false,
+    error: "Internal server error",
   });
+});
+
+const PORT = process.env.PORT || 3000;
+
+if (!process.env.VERCEL) {
+  // Only start server if not on Vercel
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
