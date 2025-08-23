@@ -347,20 +347,27 @@
 
       document
         .querySelector(".form-section")
-        .addEventListener("submit", async function (e) {
+                .addEventListener("submit", async function (e) {
           e.preventDefault();
+          
+          // Get form data
+          const data = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            whatsapp: document.getElementById("whatsapp").value,
+            cnic: document.getElementById("cnic").value,
+            city: document.getElementById("city").value,
+          };
+
+          console.log("Form submitted with data:", data); // Debug log
+
           try {
-            const data = {
-              name: document.getElementById("name").value,
-              email: document.getElementById("email").value,
-              whatsapp: document.getElementById("whatsapp").value,
-              cnic: document.getElementById("cnic").value,
-              city: document.getElementById("city").value,
-            };
-
-            console.log("Submitting data:", data); // Debug log
-
-            const res = await fetch("http://localhost:3000/api/submit", {
+            // Submit to API (will work on both localhost and Vercel)
+            const apiUrl = window.location.hostname === 'localhost' 
+              ? 'http://localhost:3000/api/submit' 
+              : '/api/submit';
+            
+            const res = await fetch(apiUrl, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(data),
@@ -370,7 +377,8 @@
             const result = await res.json();
             console.log("Response data:", result); // Debug log
 
-            if (res.ok) {
+                        if (res.ok) {
+              // Show congratulations message
               // Hide the form container
               const formContainer = document.querySelector('.container');
               formContainer.style.display = 'none';
@@ -409,27 +417,27 @@
                 <div style="margin-bottom: 25px; font-size: 1rem; opacity: 0.9;">
                   Our team will contact you soon with your referral code and program details.
                 </div>
-                            <div style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
-              Thank you for joining! 🚀
-            </div>
-            <button 
-              onclick="resetSubmission()" 
-              style="
-                background: var(--black);
-                color: var(--gold);
-                border: 2px solid var(--gold);
-                padding: 10px 20px;
-                border-radius: 15px;
-                font-size: 0.9rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.3s ease;
-              "
-              onmouseover="this.style.background='var(--gold); this.style.color='var(--black)'"
-              onmouseout="this.style.background='var(--black); this.style.color='var(--gold)'"
-            >
-              Reset (For Testing)
-            </button>
+                <div style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
+                  Thank you for joining! 🚀
+                </div>
+                <button 
+                  onclick="resetSubmission()" 
+                  style="
+                    background: var(--black);
+                    color: var(--gold);
+                    border: 2px solid var(--gold);
+                    padding: 10px 20px;
+                    border-radius: 15px;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                  "
+                  onmouseover="this.style.background='var(--gold); this.style.color='var(--black)'"
+                  onmouseout="this.style.background='var(--black); this.style.color='var(--gold)'"
+                >
+                  Reset (For Testing)
+                </button>
               `;
 
               // Add to document
@@ -443,7 +451,6 @@
               // Store submission in localStorage to prevent multiple submissions
               localStorage.setItem('anssAmbassadorSubmitted', 'true');
               localStorage.setItem('anssAmbassadorTimestamp', Date.now().toString());
-              
             } else {
               throw new Error(result.error || "Submission failed");
             }
