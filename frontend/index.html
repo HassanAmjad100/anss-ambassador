@@ -298,6 +298,53 @@
       </form>
     </div>
     <script>
+      // Check if form was already submitted
+      window.addEventListener('DOMContentLoaded', function() {
+        const alreadySubmitted = localStorage.getItem('anssAmbassadorSubmitted');
+        if (alreadySubmitted === 'true') {
+          // Hide the form and show congratulations message
+          const formContainer = document.querySelector('.container');
+          formContainer.style.display = 'none';
+          
+          const congratsMsg = document.createElement("div");
+          congratsMsg.className = "congrats-container";
+          congratsMsg.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+            background: var(--gold-gradient);
+            color: var(--black);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            line-height: 1.6;
+          `;
+          
+          congratsMsg.innerHTML = `
+            <div style="margin-bottom: 20px; font-size: 3rem;">🎉</div>
+            <div style="margin-bottom: 15px; font-size: 1.5rem;">Welcome Back!</div>
+            <div style="margin-bottom: 20px; font-size: 1.1rem; font-weight: 600;">
+              You have already joined the ANSS Ambassador Program!
+            </div>
+            <div style="margin-bottom: 25px; font-size: 1rem; opacity: 0.9;">
+              Our team will contact you soon with your referral code and program details.
+            </div>
+            <div style="font-size: 0.9rem; opacity: 0.8;">
+              Thank you for being part of our program! 🚀
+            </div>
+          `;
+          
+          document.body.appendChild(congratsMsg);
+        }
+      });
+
       document
         .querySelector(".form-section")
         .addEventListener("submit", async function (e) {
@@ -324,50 +371,79 @@
             console.log("Response data:", result); // Debug log
 
             if (res.ok) {
-              // Create success message container
-              const successMsg = document.createElement("div");
+              // Hide the form container
+              const formContainer = document.querySelector('.container');
+              formContainer.style.display = 'none';
+              
+              // Create congratulations message container
+              const congratsMsg = document.createElement("div");
+              congratsMsg.className = "congrats-container";
 
-              // Position in center of screen
-              successMsg.style.position = "fixed";
-              successMsg.style.top = "50%"; // Changed from 20px to 50%
-              successMsg.style.left = "50%";
-              successMsg.style.transform = "translate(-50%, -50%)"; // Added Y-axis transform
-              successMsg.style.zIndex = "1000";
+              // Styling for congratulations message
+              congratsMsg.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1000;
+                width: 90%;
+                max-width: 500px;
+                background: var(--gold-gradient);
+                color: var(--black);
+                padding: 40px 30px;
+                border-radius: 20px;
+                box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+                text-align: center;
+                font-weight: bold;
+                font-size: 1.3rem;
+                line-height: 1.6;
+              `;
 
-              // Styling
-              successMsg.style.width = "90%";
-              successMsg.style.maxWidth = "400px";
-              successMsg.style.background = "var(--gold-gradient)";
-              successMsg.style.color = "var(--black)";
-              successMsg.style.padding = "30px 20px"; // Increased padding
-              successMsg.style.borderRadius = "16px";
-              successMsg.style.boxShadow = "0 4px 30px rgba(0,0,0,0.4)";
-              successMsg.style.textAlign = "center";
-              successMsg.style.fontWeight = "bold";
-              successMsg.style.fontSize = "1.2rem";
-
-              // Add success message content with referral code
-              successMsg.innerHTML = `
-                <div style="margin-bottom:15px">✅ Submission Successful!</div>
-      
+              // Add congratulations content
+              congratsMsg.innerHTML = `
+                <div style="margin-bottom: 20px; font-size: 3rem;">🎉</div>
+                <div style="margin-bottom: 15px; font-size: 1.5rem;">Congratulations!</div>
+                <div style="margin-bottom: 20px; font-size: 1.1rem; font-weight: 600;">
+                  You have successfully joined the ANSS Ambassador Program!
+                </div>
+                <div style="margin-bottom: 25px; font-size: 1rem; opacity: 0.9;">
+                  Our team will contact you soon with your referral code and program details.
+                </div>
+                            <div style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
+              Thank you for joining! 🚀
+            </div>
+            <button 
+              onclick="resetSubmission()" 
+              style="
+                background: var(--black);
+                color: var(--gold);
+                border: 2px solid var(--gold);
+                padding: 10px 20px;
+                border-radius: 15px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+              "
+              onmouseover="this.style.background='var(--gold); this.style.color='var(--black)'"
+              onmouseout="this.style.background='var(--black); this.style.color='var(--gold)'"
+            >
+              Reset (For Testing)
+            </button>
               `;
 
               // Add to document
-              document.body.appendChild(successMsg);
-
-              // Clear form
-              e.target.reset();
+              document.body.appendChild(congratsMsg);
 
               // Add fade in effect
-              successMsg.style.opacity = "0";
-              successMsg.style.transition = "opacity 0.3s ease-out";
-              setTimeout(() => (successMsg.style.opacity = "1"), 10);
+              congratsMsg.style.opacity = "0";
+              congratsMsg.style.transition = "opacity 0.5s ease-out";
+              setTimeout(() => (congratsMsg.style.opacity = "1"), 10);
 
-              // Remove message after 5 seconds with fade effect
-              setTimeout(() => {
-                successMsg.style.opacity = "0";
-                setTimeout(() => successMsg.remove(), 300);
-              }, 5000);
+              // Store submission in localStorage to prevent multiple submissions
+              localStorage.setItem('anssAmbassadorSubmitted', 'true');
+              localStorage.setItem('anssAmbassadorTimestamp', Date.now().toString());
+              
             } else {
               throw new Error(result.error || "Submission failed");
             }
@@ -376,6 +452,13 @@
             alert("Error submitting form: " + err.message);
           }
         });
+
+      // Function to reset submission (for testing purposes)
+      function resetSubmission() {
+        localStorage.removeItem('anssAmbassadorSubmitted');
+        localStorage.removeItem('anssAmbassadorTimestamp');
+        location.reload();
+      }
     </script>
   </body>
 </html>
