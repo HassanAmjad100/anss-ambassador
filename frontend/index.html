@@ -417,27 +417,9 @@
                 <div style="margin-bottom: 25px; font-size: 1rem; opacity: 0.9;">
                   Our team will contact you soon with your referral code and program details.
                 </div>
-                <div style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
-                  Thank you for joining! 🚀
-                </div>
-                <button 
-                  onclick="resetSubmission()" 
-                  style="
-                    background: var(--black);
-                    color: var(--gold);
-                    border: 2px solid var(--gold);
-                    padding: 10px 20px;
-                    border-radius: 15px;
-                    font-size: 0.9rem;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                  "
-                  onmouseover="this.style.background='var(--gold); this.style.color='var(--black)'"
-                  onmouseout="this.style.background='var(--black); this.style.color='var(--gold)'"
-                >
-                  Reset (For Testing)
-                </button>
+                            <div style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
+              Thank you for joining! 🚀
+            </div>
               `;
 
               // Add to document
@@ -460,12 +442,7 @@
           }
         });
 
-      // Function to reset submission (for testing purposes)
-      function resetSubmission() {
-        localStorage.removeItem('anssAmbassadorSubmitted');
-        localStorage.removeItem('anssAmbassadorTimestamp');
-        location.reload();
-      }
+
     </script>
   </body>
 </html>
