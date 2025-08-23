@@ -420,6 +420,25 @@
                             <div style="margin-bottom: 20px; font-size: 0.9rem; opacity: 0.8;">
               Thank you for joining! 🚀
             </div>
+            <button 
+              onclick="submitAnotherResponse()" 
+              style="
+                background: var(--gold);
+                color: var(--black);
+                border: none;
+                padding: 12px 24px;
+                border-radius: 15px;
+                font-size: 1rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-top: 15px;
+              "
+              onmouseover="this.style.background='var(--black)'; this.style.color='var(--gold)'; this.style.border='2px solid var(--gold)'"
+              onmouseout="this.style.background='var(--gold)'; this.style.color='var(--black)'; this.style.border='none'"
+            >
+              Submit Another Response
+            </button>
               `;
 
               // Add to document
@@ -442,7 +461,29 @@
           }
         });
 
-
+      // Function to submit another response
+      function submitAnotherResponse() {
+        // Remove the congratulations message
+        const congratsMsg = document.querySelector('.congrats-container');
+        if (congratsMsg) {
+          congratsMsg.remove();
+        }
+        
+        // Show the form container again
+        const formContainer = document.querySelector('.container');
+        formContainer.style.display = 'block';
+        
+        // Clear the form
+        document.getElementById('name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('whatsapp').value = '';
+        document.getElementById('cnic').value = '';
+        document.getElementById('city').value = '';
+        
+        // Remove the submission flag from localStorage
+        localStorage.removeItem('anssAmbassadorSubmitted');
+        localStorage.removeItem('anssAmbassadorTimestamp');
+      }
     </script>
   </body>
 </html>
