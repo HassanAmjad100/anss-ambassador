@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { google } = require("googleapis");
-// const nodemailer = require("nodemailer"); // Temporarily commented out for testing
+const nodemailer = require("nodemailer");
 
 // Enhanced error handlers with more detail
 process.on("uncaughtException", (err) => {
@@ -88,9 +88,8 @@ const auth = new google.auth.GoogleAuth({
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID || "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
 const RANGE = "Sheet1!A:F";
 
-// Email configuration - temporarily commented out
-/*
-const emailTransporter = nodemailer.createTransporter({
+// Email configuration
+const emailTransporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER || 'your-email@gmail.com',
@@ -159,7 +158,6 @@ async function sendWelcomeEmail(email, name, referralCode) {
     return false;
   }
 }
-*/
 
 app.post("/api/submit", async (req, res) => {
   try {
@@ -217,12 +215,10 @@ app.post("/api/submit", async (req, res) => {
 
     console.log("Data appended successfully with code:", newCode);
 
-    // Send welcome email - temporarily commented out
-    /*
-    sendWelcomeEmail(email, name, newCode).catch(err => {
-      console.error("Email sending failed:", err);
-    });
-    */
+    // Send welcome email (don't block response)
+sendWelcomeEmail(email, name, newCode).catch(err => {
+  console.error("Email sending failed:", err);
+});
 
     res.json({
       success: true,
