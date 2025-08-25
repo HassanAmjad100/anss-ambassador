@@ -1,9 +1,35 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const { google } = require("googleapis");
 const nodemailer = require("nodemailer");
 
-// Enhanced error handlers with more detail
+// Email configuration with your existing credentials
+const emailTransporter = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+// Add this to verify email configuration on startup
+emailTransporter.verify((error, success) => {
+  if (error) {
+    console.error("Email configuration error:", error);
+  } else {
+    console.log("Email server is ready to send messages");
+  }
+});
+
+// Enhanced error handlers
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", {
     message: err.message,
@@ -22,13 +48,11 @@ process.on("unhandledRejection", (err) => {
 
 const app = express();
 
-// CORS configuration with specific origin
+// CORS configuration
 app.use(
   cors({
-    // Update to allow both development and production origins
     origin: [
       "http://127.0.0.1:5500",
-      "http://127.0.0.1:5500/project/frontend/index.html",
       "https://anss-ambassador.vercel.app",
       "http://localhost:3000",
     ],
@@ -37,46 +61,14 @@ app.use(
 );
 app.use(express.json());
 
-// Health check route
-app.get("/", (req, res) => {
-  res.send("Server is working!");
-});
-
-// Test route to check environment
-app.get("/api/test", (req, res) => {
-  res.json({
-    message: "API is working!",
-    environment: process.env.NODE_ENV || "development",
-    hasCredentials: !!credentials,
-    vercel: !!process.env.VERCEL,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// Load credentials from environment variables for Vercel deployment
+// Google Sheets Setup
 let credentials;
 try {
-  if (process.env.GOOGLE_CREDENTIALS) {
-    // For Vercel deployment - use environment variable
-    credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-    console.log("Credentials loaded from environment variables");
-  } else {
-    // For local development - try to read from file
-    const fs = require("fs");
-    const path = require("path");
-    credentials = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "credentials.json"))
-    );
-    console.log("Credentials loaded from local file");
-  }
+  credentials = process.env.GOOGLE_CREDENTIALS
+    ? JSON.parse(process.env.GOOGLE_CREDENTIALS)
+    : require("./credentials.json");
 } catch (err) {
   console.error("Error loading credentials:", err);
-  // Don't exit on Vercel, just log the error
-  if (process.env.VERCEL) {
-    console.error("Running on Vercel but no credentials found");
-  } else {
-    process.exit(1);
-  }
 }
 
 const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
@@ -89,18 +81,28 @@ const SPREADSHEET_ID =
   process.env.SPREADSHEET_ID || "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
 const RANGE = "Sheet1!A:F";
 
-// Email configuration
-const emailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER || "anssgroup1@gmail.com",
-    pass: process.env.EMAIL_PASS || "hohg xrnn dewa xgsu",
-  },
+// Verify email transporter
+emailTransporter.verify(function (error, success) {
+  if (error) {
+    console.error("Email configuration error:", {
+      error: error.message,
+      code: error.code,
+      command: error.command,
+    });
+  } else {
+    console.log("Server is ready to send emails");
+  }
 });
 
 // Function to send welcome email
 async function sendWelcomeEmail(email, name, referralCode) {
   try {
+    console.log("Attempting to send email to:", email);
+    console.log("Using email credentials:", {
+      user: process.env.EMAIL_USER || "anssgroup1@gmail.com",
+      usingDefault: !process.env.EMAIL_USER,
+    });
+
     const mailOptions = {
       from: process.env.EMAIL_USER || "anssgroup1@gmail.com",
       to: email,
@@ -151,11 +153,21 @@ async function sendWelcomeEmail(email, name, referralCode) {
       `,
     };
 
-    await emailTransporter.sendMail(mailOptions);
-    console.log(`Welcome email sent to ${email}`);
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log("Email sent successfully:", {
+      messageId: info.messageId,
+      response: info.response,
+      recipient: email,
+    });
     return true;
   } catch (error) {
-    console.error(`Error sending email to ${email}:`, error);
+    console.error("Detailed email sending error:", {
+      errorMessage: error.message,
+      errorCode: error.code,
+      errorCommand: error.command,
+      recipient: email,
+      stack: error.stack,
+    });
     return false;
   }
 }
@@ -221,20 +233,79 @@ app.post("/api/submit", async (req, res) => {
     console.log("Data appended successfully with code:", newCode);
 
     // Send welcome email (don't block response)
-    sendWelcomeEmail(email, name, newCode).catch((err) => {
-      console.error("Email sending failed:", err);
-    });
+    try {
+      const emailSent = await sendWelcomeEmail(email, name, newCode);
+      if (!emailSent) {
+        console.warn(
+          `Email sending failed for ${email}, but form submission was successful`
+        );
+      }
 
-    res.json({
-      success: true,
-      message: "Form submitted successfully",
-      referralCode: newCode,
-    });
+      res.json({
+        success: true,
+        message:
+          "Form submitted successfully" +
+          (emailSent ? " and welcome email sent" : " but email sending failed"),
+        referralCode: newCode,
+        emailStatus: emailSent ? "sent" : "failed",
+      });
+    } catch (error) {
+      console.error("Error in /api/submit:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message || "Internal server error",
+        emailStatus: "failed",
+      });
+    }
   } catch (error) {
     console.error("Error in /api/submit:", error);
     res.status(500).json({
       success: false,
       error: error.message || "Internal server error",
+    });
+  }
+});
+
+// Add this new test route
+app.get("/api/test-email", async (req, res) => {
+  try {
+    const testResult = await sendWelcomeEmail(
+      "your-test-email@gmail.com",
+      "Test User",
+      "TEST01"
+    );
+    res.json({
+      success: testResult,
+      message: testResult
+        ? "Test email sent successfully"
+        : "Email sending failed",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Add this new route
+app.get("/api/verify-email-config", async (req, res) => {
+  try {
+    const config = {
+      user: process.env.EMAIL_USER || "anssgroup1@gmail.com",
+      usingDefault: !process.env.EMAIL_USER,
+      environment: process.env.VERCEL ? "Vercel" : "Development",
+    };
+
+    res.json({
+      success: true,
+      config,
+      message: "Email configuration loaded",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
     });
   }
 });
@@ -250,11 +321,12 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
+// Only start server if not on Vercel
 if (!process.env.VERCEL) {
-  // Only start server if not on Vercel
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
 
+// Export for Vercel
 module.exports = app;
