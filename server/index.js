@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { google } = require("googleapis");
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer"); // Temporarily commented out for testing
 
 // Enhanced error handlers with more detail
 process.on("uncaughtException", (err) => {
@@ -88,7 +88,8 @@ const auth = new google.auth.GoogleAuth({
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID || "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
 const RANGE = "Sheet1!A:F";
 
-// Email configuration
+// Email configuration - temporarily commented out
+/*
 const emailTransporter = nodemailer.createTransporter({
   service: 'gmail',
   auth: {
@@ -158,6 +159,7 @@ async function sendWelcomeEmail(email, name, referralCode) {
     return false;
   }
 }
+*/
 
 app.post("/api/submit", async (req, res) => {
   try {
@@ -195,7 +197,7 @@ app.post("/api/submit", async (req, res) => {
     let nextNumber = 1;
     if (existingData.data.values && existingData.data.values.length > 0) {
       const lastRow = existingData.data.values[existingData.data.values.length - 1];
-      const lastCode = lastRow[5] || "SA00"; // Column F is index 5
+      const lastCode = lastRow[5] || "SA00"; // Column F (index 5) is lastCode
       const lastNumber = parseInt(lastCode.replace("SA", "")) || 0;
       nextNumber = lastNumber + 1;
     }
@@ -215,10 +217,12 @@ app.post("/api/submit", async (req, res) => {
 
     console.log("Data appended successfully with code:", newCode);
 
-    // Send welcome email (don't wait for it to complete)
+    // Send welcome email - temporarily commented out
+    /*
     sendWelcomeEmail(email, name, newCode).catch(err => {
       console.error("Email sending failed:", err);
     });
+    */
 
     res.json({
       success: true,
