@@ -362,6 +362,11 @@
           console.log("Form submitted with data:", data); // Debug log
 
           try {
+            // Disable submit button to prevent double submission
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
             // Submit to API (will work on both localhost and Vercel)
             const apiUrl = window.location.hostname === 'localhost' 
               ? 'http://localhost:3000/api/submit' 
@@ -449,15 +454,31 @@
               congratsMsg.style.transition = "opacity 0.5s ease-out";
               setTimeout(() => (congratsMsg.style.opacity = "1"), 10);
 
-              // Store submission in localStorage to prevent multiple submissions
-              localStorage.setItem('anssAmbassadorSubmitted', 'true');
-              localStorage.setItem('anssAmbassadorTimestamp', Date.now().toString());
+                          // Store submission in localStorage to prevent multiple submissions
+            localStorage.setItem('anssAmbassadorSubmitted', 'true');
+            localStorage.setItem('anssAmbassadorTimestamp', Date.now().toString());
+            
+            // Re-enable submit button (though form will be hidden)
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit';
             } else {
               throw new Error(result.error || "Submission failed");
             }
           } catch (err) {
             console.error("Form submission error:", err);
-            alert("Error submitting form: " + err.message);
+            
+            // Re-enable submit button on error
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit';
+            
+            // Show specific error for duplicate email
+            if (err.message.includes("already registered")) {
+              alert("This email is already registered. Please use a different email address.");
+            } else {
+              alert("Error submitting form: " + err.message);
+            }
           }
         });
 
@@ -483,6 +504,11 @@
         // Remove the submission flag from localStorage
         localStorage.removeItem('anssAmbassadorSubmitted');
         localStorage.removeItem('anssAmbassadorTimestamp');
+        
+        // Reset submit button
+        const submitBtn = document.querySelector('button[type="submit"]');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
       }
     </script>
   </body>
