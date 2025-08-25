@@ -103,34 +103,47 @@ async function sendWelcomeEmail(email, name, referralCode) {
     const mailOptions = {
       from: process.env.EMAIL_USER || 'your-email@gmail.com',
       to: email,
-      subject: 'Welcome to ANSS Ambassador Program! 🎉',
+      subject: '🎉 You\'re Officially an ANSS Group Ambassador!',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(90deg, #bfa14a 0%, #d4aa62 60%, #bfa14a 100%); padding: 30px; text-align: center; border-radius: 15px;">
-            <h1 style="color: #0c0c0c; margin: 0;">🎉 Welcome to ANSS Ambassador Program!</h1>
+            <h1 style="color: #0c0c0c; margin: 0;">🎉 You're Officially an ANSS Group Ambassador!</h1>
           </div>
           <div style="padding: 30px; background: #f9f9f9;">
             <h2 style="color: #d4aa62;">Hello ${name}!</h2>
-            <p>Thank you for joining the ANSS Ambassador Program! We're excited to have you on board.</p>
             
-            <div style="background: #fff; padding: 20px; border-radius: 10px; border-left: 5px solid #d4aa62; margin: 20px 0;">
-              <h3 style="color: #d4aa62; margin-top: 0;">Your Referral Code: <strong>${referralCode}</strong></h3>
-              <p>Use this code when referring friends and family to earn PKR 200,000 per successful sale!</p>
-            </div>
-            
-            <h3 style="color: #d4aa62;">What's Next?</h3>
-            <ul style="color: #333;">
-              <li>Share your referral code with your network</li>
-              <li>Post on social media about the program</li>
-              <li>Earn rewards for successful referrals</li>
-            </ul>
-            
-            <p style="margin-top: 30px; color: #666;">
-              Our team will contact you soon with more details about the program.
+            <p style="font-size: 16px; line-height: 1.6; color: #333;">
+              <strong>Great news — you're in!</strong> Your registration for the ANSS Group Ambassador Program is confirmed.
             </p>
             
-            <div style="text-align: center; margin-top: 30px;">
-              <p style="color: #d4aa62; font-weight: bold;">Thank you for being part of our program! 🚀</p>
+            <p style="font-size: 16px; line-height: 1.6; color: #333;">
+              From today, you have the power to earn <strong>Rs. 200,000</strong> on every successful property sale you refer. 
+              <strong>No limits. No catch.</strong> Just big rewards for spreading the word.
+            </p>
+            
+            <div style="background: #fff; padding: 25px; border-radius: 15px; border-left: 5px solid #d4aa62; margin: 25px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+              <h3 style="color: #d4aa62; margin-top: 0; font-size: 18px;">🎯 Your Promo Code: <strong style="font-size: 22px; color: #0c0c0c;">${referralCode}</strong></h3>
+              <p style="margin: 10px 0; color: #666; font-size: 14px;">
+                Use this code when referring friends and family to earn Rs. 200,000 per successful sale!
+              </p>
+            </div>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: #333;">
+              Our team will be sharing your next steps shortly so you can start earning right away. 
+              <strong>Get ready — this is where opportunity meets action!</strong>
+            </p>
+            
+            <div style="background: linear-gradient(90deg, #bfa14a 0%, #d4aa62 60%, #bfa14a 100%); padding: 20px; border-radius: 10px; margin: 25px 0; text-align: center;">
+              <p style="color: #0c0c0c; font-weight: bold; font-size: 18px; margin: 0;">
+                Welcome to the team — let's make big moves together! 🚀
+              </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+              <p style="color: #666; font-size: 14px; margin: 0;">
+                <strong>Best regards,</strong><br>
+                Team ANSS Group
+              </p>
             </div>
           </div>
         </div>
