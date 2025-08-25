@@ -1,12 +1,12 @@
 {
-  "name": "anss-website",
+  "name": "anss-ambassador",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server/index.js",
-    "deploy": "gh-pages -d frontend"
+    "vercel-build": "echo 'Building...'"
   },
   "keywords": [],
   "author": "",
