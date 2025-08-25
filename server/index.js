@@ -30,7 +30,7 @@ app.use(
       "http://127.0.0.1:5500",
       "http://127.0.0.1:5500/project/frontend/index.html",
       "https://anss-ambassador.vercel.app",
-      "http://localhost:3000"
+      "http://localhost:3000",
     ],
     credentials: true,
   })
@@ -49,7 +49,7 @@ app.get("/api/test", (req, res) => {
     environment: process.env.NODE_ENV || "development",
     hasCredentials: !!credentials,
     vercel: !!process.env.VERCEL,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -85,25 +85,26 @@ const auth = new google.auth.GoogleAuth({
   scopes: SCOPES,
 });
 
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID || "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
+const SPREADSHEET_ID =
+  process.env.SPREADSHEET_ID || "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
 const RANGE = "Sheet1!A:F";
 
 // Email configuration
 const emailTransporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASS || 'your-app-password'
-  }
+    user: process.env.EMAIL_USER || "anssgroup1@gmail.com",
+    pass: process.env.EMAIL_PASS || "hohg xrnn dewa xgsu",
+  },
 });
 
 // Function to send welcome email
 async function sendWelcomeEmail(email, name, referralCode) {
   try {
     const mailOptions = {
-      from: process.env.EMAIL_USER || 'your-email@gmail.com',
+      from: process.env.EMAIL_USER || "anssgroup1@gmail.com",
       to: email,
-      subject: '🎉 You\'re Officially an ANSS Group Ambassador!',
+      subject: "🎉 You're Officially an ANSS Group Ambassador!",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <div style="background: linear-gradient(90deg, #bfa14a 0%, #d4aa62 60%, #bfa14a 100%); padding: 30px; text-align: center; border-radius: 15px;">
@@ -147,9 +148,9 @@ async function sendWelcomeEmail(email, name, referralCode) {
             </div>
           </div>
         </div>
-      `
+      `,
     };
-    
+
     await emailTransporter.sendMail(mailOptions);
     console.log(`Welcome email sent to ${email}`);
     return true;
@@ -182,11 +183,14 @@ app.post("/api/submit", async (req, res) => {
     });
 
     if (existingData.data.values) {
-      const emailExists = existingData.data.values.some(row => row[1] === email); // Column B (index 1) is email
+      const emailExists = existingData.data.values.some(
+        (row) => row[1] === email
+      ); // Column B (index 1) is email
       if (emailExists) {
         return res.status(400).json({
           success: false,
-          error: "Email already registered. Please use a different email address."
+          error:
+            "Email already registered. Please use a different email address.",
         });
       }
     }
@@ -194,7 +198,8 @@ app.post("/api/submit", async (req, res) => {
     // Get existing codes to generate next code
     let nextNumber = 1;
     if (existingData.data.values && existingData.data.values.length > 0) {
-      const lastRow = existingData.data.values[existingData.data.values.length - 1];
+      const lastRow =
+        existingData.data.values[existingData.data.values.length - 1];
       const lastCode = lastRow[5] || "SA00"; // Column F (index 5) is lastCode
       const lastNumber = parseInt(lastCode.replace("SA", "")) || 0;
       nextNumber = lastNumber + 1;
@@ -216,9 +221,9 @@ app.post("/api/submit", async (req, res) => {
     console.log("Data appended successfully with code:", newCode);
 
     // Send welcome email (don't block response)
-sendWelcomeEmail(email, name, newCode).catch(err => {
-  console.error("Email sending failed:", err);
-});
+    sendWelcomeEmail(email, name, newCode).catch((err) => {
+      console.error("Email sending failed:", err);
+    });
 
     res.json({
       success: true,
