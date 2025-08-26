@@ -307,7 +307,8 @@
           submitBtn.textContent = 'Submitting...';
 
           // Submit to API (will work on both localhost and Vercel)
-          const apiUrl = window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api/submit' : '/api/submit';
+          const apiUrl =
+            window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api/submit' : '/api/submit';
 
           console.log('Submitting to API URL:', apiUrl); // Debug log
 

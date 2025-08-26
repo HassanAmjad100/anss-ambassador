@@ -58,7 +58,14 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: ['http://127.0.0.1:5500', 'https://anss-ambassador.vercel.app', 'http://localhost:3000'],
+    origin: [
+      'http://127.0.0.1:5500',
+      'http://localhost:3000',
+      'http://localhost:5500',
+      'https://anss-ambassador.vercel.app',
+      'https://anss-ambassador-git-main-hassanamjad100.vercel.app',
+      'https://anss-ambassador-hassanamjad100.vercel.app',
+    ],
     credentials: true,
   })
 );
