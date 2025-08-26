@@ -4,3 +4,4 @@ node_modules/
 server/credentials.json
 credentials.json
 env.template
+google-credentials-template.json
