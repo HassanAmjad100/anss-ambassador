@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node server/index.js",
     "start": "node server/index.js",
+    "setup": "node setup.js",
     "vercel-build": "echo 'Building...'"
   },
   "keywords": [],
@@ -20,6 +21,6 @@
     "nodemailer": "^6.10.1"
   },
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   }
 }

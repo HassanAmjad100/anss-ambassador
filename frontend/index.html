@@ -4,20 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>ANSS Ambassador Landing Page</title>
-    <link
-      href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet" />
     <style>
       :root {
         --gold: #d4aa62;
         --gold-dark: #bfa14a;
-        --gold-gradient: linear-gradient(
-          90deg,
-          #bfa14a 0%,
-          #d4aa62 60%,
-          #bfa14a 100%
-        );
+        --gold-gradient: linear-gradient(90deg, #bfa14a 0%, #d4aa62 60%, #bfa14a 100%);
         --black: #0c0c0c;
         --grey-dark: #181611;
         --grey: #232015;
@@ -26,12 +18,8 @@
         --shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
       }
       body {
-        font-family: "Montserrat", Arial, sans-serif;
-        background: linear-gradient(
-          135deg,
-          var(--black) 0%,
-          var(--grey-dark) 100%
-        );
+        font-family: 'Montserrat', Arial, sans-serif;
+        background: linear-gradient(135deg, var(--black) 0%, var(--grey-dark) 100%);
         margin: 0;
         color: var(--gold);
         min-height: 100vh;
@@ -216,33 +204,16 @@
     <div class="header">
       <img src="logo.png" alt="ANSS Group Logo" />
       <div class="header-title">ANSS Ambassador Program</div>
-      <div class="subtitle">
-        Refer a buyer. Earn PKR 200,000 per successful sale. 🚀✨🔥
-      </div>
-      <button
-        class="cta-btn"
-        onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})"
-      >
-        Join Now
-      </button>
+      <div class="subtitle">Refer a buyer. Earn PKR 200,000 per successful sale. 🚀✨🔥</div>
+      <button class="cta-btn" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">Join Now</button>
     </div>
     <div class="container">
       <h2>How It Works</h2>
       <ul>
-        <li>
-          <span class="check">✅</span>Register below to become an Ambassador
-        </li>
-        <li>
-          <span class="check">✅</span>Get your personal referral code or link
-        </li>
-        <li>
-          <span class="check">✅</span>Share with friends, family & on social
-          media
-        </li>
-        <li>
-          <span class="check">✅</span>Earn PKR 200,000 when your referral buys
-          an apartment
-        </li>
+        <li><span class="check">✅</span>Register below to become an Ambassador</li>
+        <li><span class="check">✅</span>Get your personal referral code or link</li>
+        <li><span class="check">✅</span>Share with friends, family & on social media</li>
+        <li><span class="check">✅</span>Earn PKR 200,000 when your referral buys an apartment</li>
       </ul>
       <h2>Who Can Join?</h2>
       <ul>
@@ -255,59 +226,29 @@
       <div class="note"></div>
       <form class="form-section">
         <label for="name">Full Name:</label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          placeholder="Enter your full name"
-        />
+        <input type="text" id="name" name="name" required placeholder="Enter your full name" />
         <label for="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          placeholder="Enter your email address"
-        />
+        <input type="email" id="email" name="email" required placeholder="Enter your email address" />
         <label for="whatsapp">Contact Number:</label>
-        <input
-          type="text"
-          id="whatsapp"
-          name="whatsapp"
-          required
-          placeholder="03xx-xxxxxxx"
-        />
+        <input type="text" id="whatsapp" name="whatsapp" required placeholder="03xx-xxxxxxx" />
         <label for="cnic">CNIC:</label>
-        <input
-          type="text"
-          id="cnic"
-          name="cnic"
-          required
-          placeholder="xxxxx-xxxxxxx-x"
-        />
+        <input type="text" id="cnic" name="cnic" required placeholder="xxxxx-xxxxxxx-x" />
         <label for="city">City:</label>
-        <input
-          type="text"
-          id="city"
-          name="city"
-          required
-          placeholder="Enter your city"
-        />
+        <input type="text" id="city" name="city" required placeholder="Enter your city" />
         <button type="submit">Submit</button>
       </form>
     </div>
     <script>
       // Check if form was already submitted
-      window.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('DOMContentLoaded', function () {
         const alreadySubmitted = localStorage.getItem('anssAmbassadorSubmitted');
         if (alreadySubmitted === 'true') {
           // Hide the form and show congratulations message
           const formContainer = document.querySelector('.container');
           formContainer.style.display = 'none';
-          
-          const congratsMsg = document.createElement("div");
-          congratsMsg.className = "congrats-container";
+
+          const congratsMsg = document.createElement('div');
+          congratsMsg.className = 'congrats-container';
           congratsMsg.style.cssText = `
             position: fixed;
             top: 50%;
@@ -326,7 +267,7 @@
             font-size: 1.3rem;
             line-height: 1.6;
           `;
-          
+
           congratsMsg.innerHTML = `
             <div style="margin-bottom: 20px; font-size: 3rem;">🎉</div>
             <div style="margin-bottom: 15px; font-size: 1.5rem;">Welcome Back!</div>
@@ -340,60 +281,70 @@
               Thank you for being part of our program! 🚀
             </div>
           `;
-          
+
           document.body.appendChild(congratsMsg);
         }
       });
 
-      document
-        .querySelector(".form-section")
-                .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          
-          // Get form data
-          const data = {
-            name: document.getElementById("name").value,
-            email: document.getElementById("email").value,
-            whatsapp: document.getElementById("whatsapp").value,
-            cnic: document.getElementById("cnic").value,
-            city: document.getElementById("city").value,
-          };
+      document.querySelector('.form-section').addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-          console.log("Form submitted with data:", data); // Debug log
+        // Get form data
+        const data = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          whatsapp: document.getElementById('whatsapp').value,
+          cnic: document.getElementById('cnic').value,
+          city: document.getElementById('city').value,
+        };
 
+        console.log('Form submitted with data:', data); // Debug log
+
+        try {
+          // Disable submit button to prevent double submission
+          const submitBtn = e.target.querySelector('button[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Submitting...';
+
+          // Submit to API (will work on both localhost and Vercel)
+          const apiUrl = window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api/submit' : '/api/submit';
+
+          console.log('Submitting to API URL:', apiUrl); // Debug log
+
+          const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          console.log('Response status:', res.status); // Debug log
+          console.log('Response headers:', res.headers); // Debug log
+
+          // Check if response has content
+          const responseText = await res.text();
+          console.log('Response text:', responseText); // Debug log
+
+          let result;
           try {
-            // Disable submit button to prevent double submission
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-            
-            // Submit to API (will work on both localhost and Vercel)
-            const apiUrl = window.location.hostname === 'localhost' 
-              ? 'http://localhost:3000/api/submit' 
-              : '/api/submit';
-            
-            const res = await fetch(apiUrl, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(data),
-            });
+            result = JSON.parse(responseText);
+            console.log('Response data:', result); // Debug log
+          } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            throw new Error('Invalid JSON response from server: ' + responseText);
+          }
 
-            console.log("Response status:", res.status); // Debug log
-            const result = await res.json();
-            console.log("Response data:", result); // Debug log
+          if (res.ok) {
+            // Show congratulations message
+            // Hide the form container
+            const formContainer = document.querySelector('.container');
+            formContainer.style.display = 'none';
 
-                        if (res.ok) {
-              // Show congratulations message
-              // Hide the form container
-              const formContainer = document.querySelector('.container');
-              formContainer.style.display = 'none';
-              
-              // Create congratulations message container
-              const congratsMsg = document.createElement("div");
-              congratsMsg.className = "congrats-container";
+            // Create congratulations message container
+            const congratsMsg = document.createElement('div');
+            congratsMsg.className = 'congrats-container';
 
-              // Styling for congratulations message
-              congratsMsg.style.cssText = `
+            // Styling for congratulations message
+            congratsMsg.style.cssText = `
                 position: fixed;
                 top: 50%;
                 left: 50%;
@@ -412,8 +363,8 @@
                 line-height: 1.6;
               `;
 
-              // Add congratulations content
-              congratsMsg.innerHTML = `
+            // Add congratulations content
+            congratsMsg.innerHTML = `
                 <div style="margin-bottom: 20px; font-size: 3rem;">🎉</div>
                 <div style="margin-bottom: 15px; font-size: 1.5rem;">Congratulations!</div>
                 <div style="margin-bottom: 20px; font-size: 1.1rem; font-weight: 600;">
@@ -446,41 +397,41 @@
             </button>
               `;
 
-              // Add to document
-              document.body.appendChild(congratsMsg);
+            // Add to document
+            document.body.appendChild(congratsMsg);
 
-              // Add fade in effect
-              congratsMsg.style.opacity = "0";
-              congratsMsg.style.transition = "opacity 0.5s ease-out";
-              setTimeout(() => (congratsMsg.style.opacity = "1"), 10);
+            // Add fade in effect
+            congratsMsg.style.opacity = '0';
+            congratsMsg.style.transition = 'opacity 0.5s ease-out';
+            setTimeout(() => (congratsMsg.style.opacity = '1'), 10);
 
-                          // Store submission in localStorage to prevent multiple submissions
+            // Store submission in localStorage to prevent multiple submissions
             localStorage.setItem('anssAmbassadorSubmitted', 'true');
             localStorage.setItem('anssAmbassadorTimestamp', Date.now().toString());
-            
+
             // Re-enable submit button (though form will be hidden)
             const submitBtn = e.target.querySelector('button[type="submit"]');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit';
-            } else {
-              throw new Error(result.error || "Submission failed");
-            }
-          } catch (err) {
-            console.error("Form submission error:", err);
-            
-            // Re-enable submit button on error
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit';
-            
-            // Show specific error for duplicate email
-            if (err.message.includes("already registered")) {
-              alert("This email is already registered. Please use a different email address.");
-            } else {
-              alert("Error submitting form: " + err.message);
-            }
+          } else {
+            throw new Error(result.error || 'Submission failed');
           }
-        });
+        } catch (err) {
+          console.error('Form submission error:', err);
+
+          // Re-enable submit button on error
+          const submitBtn = e.target.querySelector('button[type="submit"]');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit';
+
+          // Show specific error for duplicate email
+          if (err.message.includes('already registered')) {
+            alert('This email is already registered. Please use a different email address.');
+          } else {
+            alert('Error submitting form: ' + err.message);
+          }
+        }
+      });
 
       // Function to submit another response
       function submitAnotherResponse() {
@@ -489,22 +440,22 @@
         if (congratsMsg) {
           congratsMsg.remove();
         }
-        
+
         // Show the form container again
         const formContainer = document.querySelector('.container');
         formContainer.style.display = 'block';
-        
+
         // Clear the form
         document.getElementById('name').value = '';
         document.getElementById('email').value = '';
         document.getElementById('whatsapp').value = '';
         document.getElementById('cnic').value = '';
         document.getElementById('city').value = '';
-        
+
         // Remove the submission flag from localStorage
         localStorage.removeItem('anssAmbassadorSubmitted');
         localStorage.removeItem('anssAmbassadorTimestamp');
-        
+
         // Reset submit button
         const submitBtn = document.querySelector('button[type="submit"]');
         submitBtn.disabled = false;

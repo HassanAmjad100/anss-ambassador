@@ -1,18 +1,18 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const express = require("express");
-const cors = require("cors");
-const { google } = require("googleapis");
-const nodemailer = require("nodemailer");
+const express = require('express');
+const cors = require('cors');
+const { google } = require('googleapis');
+const nodemailer = require('nodemailer');
 
 // Email configuration with your existing credentials
 const emailTransporter = nodemailer.createTransport({
-  service: "gmail",
-  host: "smtp.gmail.com",
+  service: 'gmail',
+  host: 'smtp.gmail.com',
   port: 587,
   secure: false,
   auth: {
-    user: process.env.EMAIL_USER,
+    user: process.env.EMAIL_USER || 'anssgroup1@gmail.com',
     pass: process.env.EMAIL_PASS,
   },
   tls: {
@@ -20,26 +20,33 @@ const emailTransporter = nodemailer.createTransport({
   },
 });
 
+// Check if email credentials are properly configured
+if (!process.env.EMAIL_PASS) {
+  console.warn('⚠️  EMAIL_PASS not found in environment variables.');
+  console.warn('   Email functionality will be disabled.');
+  console.warn('   Please set up Gmail App Password as described in SETUP.md');
+}
+
 // Add this to verify email configuration on startup
 emailTransporter.verify((error, success) => {
   if (error) {
-    console.error("Email configuration error:", error);
+    console.error('Email configuration error:', error);
   } else {
-    console.log("Email server is ready to send messages");
+    console.log('Email server is ready to send messages');
   }
 });
 
 // Enhanced error handlers
-process.on("uncaughtException", (err) => {
-  console.error("Uncaught Exception:", {
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', {
     message: err.message,
     stack: err.stack,
     timestamp: new Date().toISOString(),
   });
 });
 
-process.on("unhandledRejection", (err) => {
-  console.error("Unhandled Rejection:", {
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', {
     message: err.message,
     stack: err.stack,
     timestamp: new Date().toISOString(),
@@ -51,11 +58,7 @@ const app = express();
 // CORS configuration
 app.use(
   cors({
-    origin: [
-      "http://127.0.0.1:5500",
-      "https://anss-ambassador.vercel.app",
-      "http://localhost:3000",
-    ],
+    origin: ['http://127.0.0.1:5500', 'https://anss-ambassador.vercel.app', 'http://localhost:3000'],
     credentials: true,
   })
 );
@@ -64,47 +67,56 @@ app.use(express.json());
 // Google Sheets Setup
 let credentials;
 try {
-  credentials = process.env.GOOGLE_CREDENTIALS
-    ? JSON.parse(process.env.GOOGLE_CREDENTIALS)
-    : require("./credentials.json");
+  if (process.env.GOOGLE_CREDENTIALS) {
+    credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+    console.log('Using Google credentials from environment variable');
+  } else {
+    try {
+      credentials = require('../credentials.json');
+      console.log('Using Google credentials from credentials.json file');
+    } catch (fileErr) {
+      console.warn('No credentials.json file found. Google Sheets functionality will be disabled.');
+      console.warn('Please set up Google API credentials as described in SETUP.md');
+    }
+  }
 } catch (err) {
-  console.error("Error loading credentials:", err);
+  console.error('Error loading Google credentials:', err);
+  console.warn('Google Sheets functionality will be disabled. Please check your credentials setup.');
 }
 
-const SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 const auth = new google.auth.GoogleAuth({
   credentials,
   scopes: SCOPES,
 });
 
-const SPREADSHEET_ID =
-  process.env.SPREADSHEET_ID || "1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0";
-const RANGE = "Sheet1!A:F";
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID || '1fcjHfMloNphoL648p9vlbTdMBr5xvplQELy-jS_9pz0';
+const RANGE = 'Sheet1!A:F';
 
 // Verify email transporter
 emailTransporter.verify(function (error, success) {
   if (error) {
-    console.error("Email configuration error:", {
+    console.error('Email configuration error:', {
       error: error.message,
       code: error.code,
       command: error.command,
     });
   } else {
-    console.log("Server is ready to send emails");
+    console.log('Server is ready to send emails');
   }
 });
 
 // Function to send welcome email
 async function sendWelcomeEmail(email, name, referralCode) {
   try {
-    console.log("Attempting to send email to:", email);
-    console.log("Using email credentials:", {
-      user: process.env.EMAIL_USER || "anssgroup1@gmail.com",
+    console.log('Attempting to send email to:', email);
+    console.log('Using email credentials:', {
+      user: process.env.EMAIL_USER || 'anssgroup1@gmail.com',
       usingDefault: !process.env.EMAIL_USER,
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || "anssgroup1@gmail.com",
+      from: process.env.EMAIL_USER || 'anssgroup1@gmail.com',
       to: email,
       subject: "🎉 You're Officially an ANSS Group Ambassador!",
       html: `
@@ -154,14 +166,14 @@ async function sendWelcomeEmail(email, name, referralCode) {
     };
 
     const info = await emailTransporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", {
+    console.log('Email sent successfully:', {
       messageId: info.messageId,
       response: info.response,
       recipient: email,
     });
     return true;
   } catch (error) {
-    console.error("Detailed email sending error:", {
+    console.error('Detailed email sending error:', {
       errorMessage: error.message,
       errorCode: error.code,
       errorCommand: error.command,
@@ -172,21 +184,21 @@ async function sendWelcomeEmail(email, name, referralCode) {
   }
 }
 
-app.post("/api/submit", async (req, res) => {
+app.post('/api/submit', async (req, res) => {
   try {
-    console.log("Received request body:", req.body);
+    console.log('Received request body:', req.body);
     const { name, email, whatsapp, cnic, city } = req.body;
 
     if (!name || !email || !whatsapp || !cnic || !city) {
-      throw new Error("Missing required fields");
+      throw new Error('Missing required fields');
     }
 
     // Check if credentials are available
     if (!credentials) {
-      throw new Error("Google API credentials not configured");
+      throw new Error('Google API credentials not configured');
     }
 
-    const sheets = google.sheets({ version: "v4", auth });
+    const sheets = google.sheets({ version: 'v4', auth });
 
     // Check if email already exists to prevent duplicates
     const existingData = await sheets.spreadsheets.values.get({
@@ -195,14 +207,11 @@ app.post("/api/submit", async (req, res) => {
     });
 
     if (existingData.data.values) {
-      const emailExists = existingData.data.values.some(
-        (row) => row[1] === email
-      ); // Column B (index 1) is email
+      const emailExists = existingData.data.values.some((row) => row[1] === email); // Column B (index 1) is email
       if (emailExists) {
         return res.status(400).json({
           success: false,
-          error:
-            "Email already registered. Please use a different email address.",
+          error: 'Email already registered. Please use a different email address.',
         });
       }
     }
@@ -210,75 +219,64 @@ app.post("/api/submit", async (req, res) => {
     // Get existing codes to generate next code
     let nextNumber = 1;
     if (existingData.data.values && existingData.data.values.length > 0) {
-      const lastRow =
-        existingData.data.values[existingData.data.values.length - 1];
-      const lastCode = lastRow[5] || "SA00"; // Column F (index 5) is lastCode
-      const lastNumber = parseInt(lastCode.replace("SA", "")) || 0;
+      const lastRow = existingData.data.values[existingData.data.values.length - 1];
+      const lastCode = lastRow[5] || 'SA00'; // Column F (index 5) is lastCode
+      const lastNumber = parseInt(lastCode.replace('SA', '')) || 0;
       nextNumber = lastNumber + 1;
     }
 
-    const newCode = "SA" + nextNumber.toString().padStart(2, "0");
+    const newCode = 'SA' + nextNumber.toString().padStart(2, '0');
 
     // Append new row with code
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: "Sheet1!A:F", // Explicitly set range
-      valueInputOption: "USER_ENTERED",
-      insertDataOption: "INSERT_ROWS",
+      range: 'Sheet1!A:F', // Explicitly set range
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
       resource: {
         values: [[name, email, whatsapp, cnic, city, newCode]],
       },
     });
 
-    console.log("Data appended successfully with code:", newCode);
+    console.log('Data appended successfully with code:', newCode);
 
     // Send welcome email (don't block response)
     try {
       const emailSent = await sendWelcomeEmail(email, name, newCode);
       if (!emailSent) {
-        console.warn(
-          `Email sending failed for ${email}, but form submission was successful`
-        );
+        console.warn(`Email sending failed for ${email}, but form submission was successful`);
       }
 
       res.json({
         success: true,
-        message:
-          "Form submitted successfully" +
-          (emailSent ? " and welcome email sent" : " but email sending failed"),
+        message: 'Form submitted successfully' + (emailSent ? ' and welcome email sent' : ' but email sending failed'),
         referralCode: newCode,
-        emailStatus: emailSent ? "sent" : "failed",
+        emailStatus: emailSent ? 'sent' : 'failed',
       });
     } catch (error) {
-      console.error("Error in /api/submit:", error);
+      console.error('Error in /api/submit:', error);
       res.status(500).json({
         success: false,
-        error: error.message || "Internal server error",
-        emailStatus: "failed",
+        error: error.message || 'Internal server error',
+        emailStatus: 'failed',
       });
     }
   } catch (error) {
-    console.error("Error in /api/submit:", error);
+    console.error('Error in /api/submit:', error);
     res.status(500).json({
       success: false,
-      error: error.message || "Internal server error",
+      error: error.message || 'Internal server error',
     });
   }
 });
 
 // Add this new test route
-app.get("/api/test-email", async (req, res) => {
+app.get('/api/test-email', async (req, res) => {
   try {
-    const testResult = await sendWelcomeEmail(
-      "your-test-email@gmail.com",
-      "Test User",
-      "TEST01"
-    );
+    const testResult = await sendWelcomeEmail('your-test-email@gmail.com', 'Test User', 'TEST01');
     res.json({
       success: testResult,
-      message: testResult
-        ? "Test email sent successfully"
-        : "Email sending failed",
+      message: testResult ? 'Test email sent successfully' : 'Email sending failed',
     });
   } catch (error) {
     res.status(500).json({
@@ -289,18 +287,18 @@ app.get("/api/test-email", async (req, res) => {
 });
 
 // Add this new route
-app.get("/api/verify-email-config", async (req, res) => {
+app.get('/api/verify-email-config', async (req, res) => {
   try {
     const config = {
-      user: process.env.EMAIL_USER || "anssgroup1@gmail.com",
+      user: process.env.EMAIL_USER || 'anssgroup1@gmail.com',
       usingDefault: !process.env.EMAIL_USER,
-      environment: process.env.VERCEL ? "Vercel" : "Development",
+      environment: process.env.VERCEL ? 'Vercel' : 'Development',
     };
 
     res.json({
       success: true,
       config,
-      message: "Email configuration loaded",
+      message: 'Email configuration loaded',
     });
   } catch (error) {
     res.status(500).json({
@@ -312,10 +310,10 @@ app.get("/api/verify-email-config", async (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
+  console.error('Unhandled error:', err);
   res.status(500).json({
     success: false,
-    error: "Internal server error",
+    error: 'Internal server error',
   });
 });
 
